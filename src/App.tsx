@@ -1,17 +1,37 @@
-import { useState } from "react";
+import { useState, createContext } from "react";
 import react from "@vitejs/plugin-react-swc";
-import { Button, ButtonGroup } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 
-function App({ name }: { name: string }) {
-    const [count, setCount] = useState(0);
+type contextT = {
+    theme: {
+        themeConfig: { darkMode: boolean };
+        setThemeConfig: () => object;
+    };
+};
+
+const context = createContext(undefined);
+
+function App() {
+    const [themeConfig, setThemeConfig] = useState({
+        darkMode: true,
+    });
 
     return (
-        <>
-            <h1>
-                {name} are {count}
-                <Button color="primary">Button</Button>
-            </h1>
-        </>
+        <context.Provider
+            value={{
+                theme: {
+                    themeConfig,
+                    setThemeConfig,
+                },
+            }}
+        >
+            <main className="dark text-foreground bg-background">
+                <div className="Container">
+                    <Button>test buuton</Button>
+                    <h1>test</h1>
+                </div>
+            </main>
+        </context.Provider>
     );
 }
 

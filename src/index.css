@@ -2,3 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+html,
+html:focus-within {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--header-padding-hight, 5rem);
+    text-size-adjust: none;
+}
+body {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    overscroll-behavior: contain;
+    /* ! font famaily */
+    /* font-family:  !important; */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+    background-color: var(--bg-clr);
+}
+
+main {
+    width: 100%;
+}
+
+.Container {
+    --container-width: 90%;
+    height: 100%;
+    width: var(--container-width, 90%);
+    margin-inline: auto;
+}
+
+:where(h1, h2, h3, h4) {
+    text-wrap: balance;
+}
+.visually-hidden {
+    position: absolute;
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.old-script,
+.no-script {
+    width: 100vw;
+    height: 100vh;
+    @include flex(r, c, c);
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0 1rem;
+    text-align: center;
+    background-color: #1c1e21;
+    color: #d9d4ce;
+    /* & > p {
+        font-size: 24px;
+        color: #d9d4ce;
+    } */
+}
