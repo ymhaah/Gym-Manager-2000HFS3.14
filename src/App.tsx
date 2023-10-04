@@ -1,37 +1,82 @@
-import { useState, createContext } from "react";
+import { useState } from "react";
 import react from "@vitejs/plugin-react-swc";
 import { Button } from "@nextui-org/react";
+import {
+    Table,
+    TableHeader,
+    TableColumn,
+    TableBody,
+    TableRow,
+    TableCell,
+} from "@nextui-org/react";
 
-type contextT = {
-    theme: {
-        themeConfig: { darkMode: boolean };
-        setThemeConfig: () => object;
-    };
+type themeT = {
+    darkMode: boolean;
 };
 
-const context = createContext(undefined);
-
 function App() {
-    const [themeConfig, setThemeConfig] = useState({
+    const [themeConfig, setThemeConfig] = useState<themeT>({
         darkMode: true,
     });
 
     return (
-        <context.Provider
-            value={{
-                theme: {
-                    themeConfig,
-                    setThemeConfig,
-                },
-            }}
+        <main
+            className={`${
+                themeConfig.darkMode ? "dark" : "light"
+            } text-foreground bg-background`}
         >
-            <main className="dark text-foreground bg-background">
-                <div className="Container">
-                    <Button>test buuton</Button>
-                    <h1>test</h1>
+            <div className="Container">
+                <Button
+                    onClick={() =>
+                        setThemeConfig({
+                            darkMode: false,
+                        })
+                    }
+                >
+                    light mode
+                </Button>
+                <Button
+                    onClick={() =>
+                        setThemeConfig({
+                            darkMode: true,
+                        })
+                    }
+                >
+                    dark mode
+                </Button>
+                <div>
+                    <Table aria-label="Example static collection table">
+                        <TableHeader>
+                            <TableColumn>NAME</TableColumn>
+                            <TableColumn>ROLE</TableColumn>
+                            <TableColumn>STATUS</TableColumn>
+                        </TableHeader>
+                        <TableBody>
+                            <TableRow key="1">
+                                <TableCell>Tony Reichert</TableCell>
+                                <TableCell>CEO</TableCell>
+                                <TableCell>Active</TableCell>
+                            </TableRow>
+                            <TableRow key="2">
+                                <TableCell>Zoey Lang</TableCell>
+                                <TableCell>Technical Lead</TableCell>
+                                <TableCell>Paused</TableCell>
+                            </TableRow>
+                            <TableRow key="3">
+                                <TableCell>Jane Fisher</TableCell>
+                                <TableCell>Senior Developer</TableCell>
+                                <TableCell>Active</TableCell>
+                            </TableRow>
+                            <TableRow key="4">
+                                <TableCell>William Howard</TableCell>
+                                <TableCell>Community Manager</TableCell>
+                                <TableCell>Vacation</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
                 </div>
-            </main>
-        </context.Provider>
+            </div>
+        </main>
     );
 }
 
