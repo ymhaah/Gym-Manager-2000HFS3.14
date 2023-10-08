@@ -1,4 +1,6 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
+
+import useLocalStorage from "../hooks/useLocalStorage.tsx";
 
 import {
     Table,
@@ -7,37 +9,105 @@ import {
     TableBody,
     TableRow,
     TableCell,
+    User,
 } from "@nextui-org/react";
 
+type tableContentT = {
+    key: number;
+    name: string;
+    subscription: string;
+    date: Date | number;
+    state: string;
+};
+
 function Manager() {
+    const userData: tableContentT[] = [
+        {
+            key: 1,
+            name: "youssef 23",
+            subscription: "CEO",
+            date: new Date().getFullYear(),
+            state: "Active",
+        },
+    ];
+
+    const columns = [
+        {
+            key: "name",
+            label: "NAME",
+        },
+        {
+            key: "subscription",
+            label: "SUBSCRIPTION",
+        },
+        {
+            key: "date",
+            label: "DATE",
+        },
+        {
+            key: "state",
+            label: "STATE",
+        },
+    ];
+
+    const cellData = useCallback(
+        (userData: tableContentT, columnKey: React.Key) => {
+            const cellValue = userData[columnKey as keyof tableContentT];
+
+            switch (columnKey) {
+                case "name":
+                    return (
+                        <User
+                            avatarProps={{
+                                radius: "full",
+                                showFallback: true,
+                                isBordered: true,
+                                color: "primary",
+                                src: "",
+                            }}
+                            description="test the description"
+                            name={cellValue as string | number}
+                        />
+                    );
+                case "subscription":
+                    return (
+                        <div className="relative flex items-center gap-2"></div>
+                    );
+                case "date":
+                    return (
+                        <div className="relative flex items-center gap-2"></div>
+                    );
+                case "state":
+                    return (
+                        <div className="relative flex items-center gap-2"></div>
+                    );
+                default:
+                    return cellValue;
+            }
+        },
+        []
+    );
+
     return (
-        <Table aria-label="Example static collection table">
-            <TableHeader>
-                <TableColumn>NAME</TableColumn>
-                <TableColumn>ROLE</TableColumn>
-                <TableColumn>STATUS</TableColumn>
+        <Table aria-label="gym table manager">
+            <TableHeader columns={columns}>
+                {(column) => (
+                    <TableColumn key={column.key}>{column.label}</TableColumn>
+                )}
             </TableHeader>
-            <TableBody>
-                <TableRow key="1">
-                    <TableCell>Tony Reichert</TableCell>
-                    <TableCell>CEO</TableCell>
-                    <TableCell>Active</TableCell>
-                </TableRow>
-                <TableRow key="2">
-                    <TableCell>Zoey Lang</TableCell>
-                    <TableCell>Technical Lead</TableCell>
-                    <TableCell>Paused</TableCell>
-                </TableRow>
-                <TableRow key="3">
-                    <TableCell>Jane Fisher</TableCell>
-                    <TableCell>Senior Developer</TableCell>
-                    <TableCell>Active</TableCell>
-                </TableRow>
-                <TableRow key="4">
-                    <TableCell>William Howard</TableCell>
-                    <TableCell>Community Manager</TableCell>
-                    <TableCell>Vacation</TableCell>
-                </TableRow>
+            <TableBody
+                items={userData}
+                emptyContent={
+                    "No data to display, click '+' icon to add a new row"
+                }
+            >
+                {(item) => (
+                    <TableRow key={item.key}>
+                        {(columnKey) => (
+                            <TableCell>{cellData(item, columnKey)}</TableCell>
+                        )}
+                    </TableRow>
+                )}
             </TableBody>
         </Table>
     );

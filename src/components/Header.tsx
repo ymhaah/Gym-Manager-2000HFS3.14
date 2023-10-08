@@ -15,6 +15,7 @@ import {
     DropdownMenu,
     DropdownSection,
     DropdownItem,
+    Tooltip,
 } from "@nextui-org/react";
 
 function Header({
@@ -59,23 +60,25 @@ function Header({
             </NavbarContent>
             <NavbarContent justify="end">
                 <NavbarItem>
-                    <Button
-                        isIconOnly
-                        color="primary"
-                        variant="flat"
-                        aria-label="switch theme"
-                        onClick={() => switchTheme()}
-                    >
-                        {themeConfig ? (
-                            <span className="material-symbols-outlined">
-                                light_mode
-                            </span>
-                        ) : (
-                            <span className="material-symbols-outlined">
-                                mode_night
-                            </span>
-                        )}
-                    </Button>
+                    <Tooltip content="switch theme" placement="bottom">
+                        <Button
+                            isIconOnly
+                            color="primary"
+                            variant="flat"
+                            aria-label="switch theme"
+                            onClick={() => switchTheme()}
+                        >
+                            {themeConfig ? (
+                                <span className="material-symbols-outlined">
+                                    light_mode
+                                </span>
+                            ) : (
+                                <span className="material-symbols-outlined">
+                                    mode_night
+                                </span>
+                            )}
+                        </Button>
+                    </Tooltip>
                 </NavbarItem>
                 <Dropdown>
                     <NavbarItem className="hidden lg:flex">
