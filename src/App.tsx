@@ -23,7 +23,9 @@ function App() {
         >
             <Header themeConfig={darkMode} switchTheme={switchTheme} />
             <main>
-                <Manager />
+                <div className="Container">
+                    <Manager />
+                </div>
             </main>
         </div>
     );

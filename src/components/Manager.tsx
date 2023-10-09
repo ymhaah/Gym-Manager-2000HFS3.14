@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, ReactNode } from "react";
 
 import useLocalStorage from "../hooks/useLocalStorage.tsx";
 
@@ -10,14 +10,30 @@ import {
     TableRow,
     TableCell,
     User,
+    Chip,
+    ChipProps,
+    Select,
+    SelectItem,
+    SelectedItems,
 } from "@nextui-org/react";
+
+const statusColorMap: Record<string, ChipProps["color"]> = {
+    active: "success",
+    waiting: "warning",
+    paused: "danger",
+};
+const subscriptionColorMap: Record<string, ChipProps["color"]> = {
+    cardio: "success",
+    weights: "primary",
+    yoga: "secondary",
+};
 
 type tableContentT = {
     key: number;
     name: string;
-    subscription: string;
+    subscription: "cardio" | "weights" | "yoga";
     date: Date | number;
-    state: string;
+    state: "active" | "waiting" | "paused";
 };
 
 function Manager() {
@@ -25,9 +41,30 @@ function Manager() {
         {
             key: 1,
             name: "youssef 23",
-            subscription: "CEO",
+            subscription: "cardio",
             date: new Date().getFullYear(),
-            state: "Active",
+            state: "active",
+        },
+        {
+            key: 2,
+            name: "keven loveron",
+            subscription: "weights",
+            date: new Date().getFullYear(),
+            state: "paused",
+        },
+        {
+            key: 3,
+            name: "ronny coleman",
+            subscription: "weights",
+            date: new Date().getFullYear(),
+            state: "paused",
+        },
+        {
+            key: 4,
+            name: "karen smith",
+            subscription: "yoga",
+            date: new Date().getFullYear(),
+            state: "waiting",
         },
     ];
 
@@ -50,14 +87,41 @@ function Manager() {
         },
     ];
 
+    const set = new Set<number | string>();
+    for (let i = 0; i < userData.length; i++) {
+        if (userData[i].state == "paused") {
+            set.add(userData[i].key.toString());
+        }
+    }
+    const selectedKeys = useRef(set);
+
     const cellData = useCallback(
         (userData: tableContentT, columnKey: React.Key) => {
             const cellValue = userData[columnKey as keyof tableContentT];
+
+            const subscriptions = [
+                {
+                    label: "cardio",
+                    value: "cardio",
+                    description: "The second most popular pet in the world",
+                },
+                {
+                    label: "weights",
+                    value: "weights",
+                    description: "The second most popular pet in the world",
+                },
+                {
+                    label: "yoga",
+                    value: "yoga",
+                    description: "The second most popular pet in the world",
+                },
+            ];
 
             switch (columnKey) {
                 case "name":
                     return (
                         <User
+                            className="capitalize"
                             avatarProps={{
                                 radius: "full",
                                 showFallback: true,
@@ -66,20 +130,64 @@ function Manager() {
                                 src: "",
                             }}
                             description="test the description"
-                            name={cellValue as string | number}
+                            name={cellValue as string}
                         />
                     );
                 case "subscription":
                     return (
-                        <div className="relative flex items-center gap-2"></div>
+                        <Select
+                            items={userData as never}
+                            aria-label="subscription plan"
+                            labelPlacement="outside-left"
+                            size="md"
+                            variant="bordered"
+                            selectionMode="multiple"
+                            isMultiline={true}
+                            defaultSelectedKeys={[cellValue] as string[]}
+                            renderValue={(
+                                items: SelectedItems<tableContentT>
+                            ) => {
+                                return (
+                                    <div className="flex flex-wrap gap-1 ">
+                                        {items.map((item) => (
+                                            <Chip
+                                                key={item.key}
+                                                size="sm"
+                                                radius="sm"
+                                            >
+                                                {item.textValue}
+                                            </Chip>
+                                        ))}
+                                    </div>
+                                );
+                            }}
+                        >
+                            {subscriptions.map((subscription) => (
+                                <SelectItem
+                                    key={subscription.value}
+                                    textValue={subscription.value}
+                                >
+                                    {subscription.value}
+                                </SelectItem>
+                            ))}
+                        </Select>
                     );
                 case "date":
                     return (
-                        <div className="relative flex items-center gap-2"></div>
+                        <div className="relative flex items-center gap-2">
+                            <p>{cellValue as string}</p>
+                        </div>
                     );
                 case "state":
                     return (
-                        <div className="relative flex items-center gap-2"></div>
+                        <Chip
+                            className="capitalize"
+                            color={statusColorMap[cellValue as string]}
+                            size="md"
+                            variant="flat"
+                        >
+                            {cellValue as string}
+                        </Chip>
                     );
                 default:
                     return cellValue;
@@ -89,7 +197,16 @@ function Manager() {
     );
 
     return (
-        <Table aria-label="gym table manager">
+        <Table
+            aria-label="gym table manager"
+            selectionMode="single"
+            disabledKeys={selectedKeys.current}
+            onSelectionChange={() => {
+                // ! add the edit
+            }}
+            layout="fixed"
+            radius="sm"
+        >
             <TableHeader columns={columns}>
                 {(column) => (
                     <TableColumn key={column.key}>{column.label}</TableColumn>
@@ -104,7 +221,9 @@ function Manager() {
                 {(item) => (
                     <TableRow key={item.key}>
                         {(columnKey) => (
-                            <TableCell>{cellData(item, columnKey)}</TableCell>
+                            <TableCell>
+                                {cellData(item, columnKey) as ReactNode}
+                            </TableCell>
                         )}
                     </TableRow>
                 )}
