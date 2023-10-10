@@ -15,6 +15,14 @@ import {
     Select,
     SelectItem,
     SelectedItems,
+    Tooltip,
+    Button,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
 } from "@nextui-org/react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -95,6 +103,8 @@ function Manager() {
     }
     const selectedKeys = useRef(set);
 
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     const cellData = useCallback(
         (userData: tableContentT, columnKey: React.Key) => {
             const cellValue = userData[columnKey as keyof tableContentT];
@@ -135,42 +145,50 @@ function Manager() {
                     );
                 case "subscription":
                     return (
-                        <Select
-                            items={userData as never}
-                            aria-label="subscription plan"
-                            labelPlacement="outside-left"
+                        <Chip
+                            className="capitalize"
+                            color={subscriptionColorMap[cellValue as string]}
                             size="md"
-                            variant="bordered"
-                            selectionMode="multiple"
-                            isMultiline={true}
-                            defaultSelectedKeys={[cellValue] as string[]}
-                            renderValue={(
-                                items: SelectedItems<tableContentT>
-                            ) => {
-                                return (
-                                    <div className="flex flex-wrap gap-1 ">
-                                        {items.map((item) => (
-                                            <Chip
-                                                key={item.key}
-                                                size="sm"
-                                                radius="sm"
-                                            >
-                                                {item.textValue}
-                                            </Chip>
-                                        ))}
-                                    </div>
-                                );
-                            }}
+                            variant="flat"
                         >
-                            {subscriptions.map((subscription) => (
-                                <SelectItem
-                                    key={subscription.value}
-                                    textValue={subscription.value}
-                                >
-                                    {subscription.value}
-                                </SelectItem>
-                            ))}
-                        </Select>
+                            {cellValue as string}
+                        </Chip>
+                        // <Select
+                        //     items={userData as never}
+                        //     aria-label="subscription plan"
+                        //     labelPlacement="outside-left"
+                        //     size="md"
+                        //     variant="bordered"
+                        //     selectionMode="multiple"
+                        //     isMultiline={true}
+                        //     defaultSelectedKeys={[cellValue] as string[]}
+                        //     renderValue={(
+                        //         items: SelectedItems<tableContentT>
+                        //     ) => {
+                        //         return (
+                        //             <div className="flex flex-wrap gap-1 ">
+                        //                 {items.map((item) => (
+                        //                     <Chip
+                        //                         key={item.key}
+                        //                         size="sm"
+                        //                         radius="sm"
+                        //                     >
+                        //                         {item.textValue}
+                        //                     </Chip>
+                        //                 ))}
+                        //             </div>
+                        //         );
+                        //     }}
+                        // >
+                        //     {subscriptions.map((subscription) => (
+                        //         <SelectItem
+                        //             key={subscription.value}
+                        //             textValue={subscription.value}
+                        //         >
+                        //             {subscription.value}
+                        //         </SelectItem>
+                        //     ))}
+                        // </Select>
                     );
                 case "date":
                     return (
@@ -197,38 +215,94 @@ function Manager() {
     );
 
     return (
-        <Table
-            aria-label="gym table manager"
-            selectionMode="single"
-            disabledKeys={selectedKeys.current}
-            onSelectionChange={() => {
-                // ! add the edit
-            }}
-            layout="fixed"
-            radius="sm"
-        >
-            <TableHeader columns={columns}>
-                {(column) => (
-                    <TableColumn key={column.key}>{column.label}</TableColumn>
-                )}
-            </TableHeader>
-            <TableBody
-                items={userData}
-                emptyContent={
-                    "No data to display, click '+' icon to add a new row"
+        <>
+            <Table
+                aria-label="gym table manager"
+                selectionMode="single"
+                disabledKeys={selectedKeys.current}
+                onSelectionChange={() => {
+                    // ! add the edit
+                }}
+                layout="fixed"
+                radius="sm"
+                bottomContent={
+                    <div className="flex w-full justify-center">
+                        <Tooltip
+                            content="Add new client data"
+                            placement="bottom"
+                        >
+                            <Button
+                                color="primary"
+                                variant="shadow"
+                                aria-label="Add new client data"
+                                onPress={onOpen}
+                                endContent={
+                                    <span className="material-symbols-outlined">
+                                        add
+                                    </span>
+                                }
+                            >
+                                Add Client
+                            </Button>
+                        </Tooltip>
+                    </div>
                 }
             >
-                {(item) => (
-                    <TableRow key={item.key}>
-                        {(columnKey) => (
-                            <TableCell>
-                                {cellData(item, columnKey) as ReactNode}
-                            </TableCell>
-                        )}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+                <TableHeader columns={columns}>
+                    {(column) => (
+                        <TableColumn key={column.key}>
+                            {column.label}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody
+                    items={userData}
+                    emptyContent={
+                        "No data to display, click '+' icon to add a new row"
+                    }
+                >
+                    {(item) => (
+                        <TableRow key={item.key}>
+                            {(columnKey) => (
+                                <TableCell>
+                                    {cellData(item, columnKey) as ReactNode}
+                                </TableCell>
+                            )}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">
+                                Modal Title
+                            </ModalHeader>
+                            <ModalBody>
+                                {/* ! add the input and link it to the userData to update the table content */}
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    color="primary"
+                                    onPress={() => {
+                                        // ! update table data from the input
+                                        onClose();
+                                    }}
+                                    endContent={
+                                        <span className="material-symbols-outlined">
+                                            add
+                                        </span>
+                                    }
+                                >
+                                    Add
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+        </>
     );
 }
 
