@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, ReactNode } from "react";
+import { useRef, useState, useCallback, ReactNode, useMemo } from "react";
 
 import useLocalStorage from "../hooks/useLocalStorage.tsx";
 
@@ -23,6 +23,11 @@ import {
     ModalBody,
     ModalFooter,
     useDisclosure,
+    Input,
+    Divider,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
 } from "@nextui-org/react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -30,6 +35,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
     waiting: "warning",
     paused: "danger",
 };
+
 const subscriptionColorMap: Record<string, ChipProps["color"]> = {
     cardio: "success",
     weights: "primary",
@@ -39,42 +45,48 @@ const subscriptionColorMap: Record<string, ChipProps["color"]> = {
 type tableContentT = {
     key: number;
     name: string;
-    subscription: "cardio" | "weights" | "yoga";
-    date: Date | number;
+    PhoneNumber?: number;
+    subscription: ("cardio" | "weights" | "yoga")[];
+    date: Date | string | number;
     state: "active" | "waiting" | "paused";
 };
 
 function Manager() {
-    const userData: tableContentT[] = [
+    // const phoneReg = /^(01)[0-2,5]{1}[0-9]{8}/g;
+
+    const [newUser, setNewUser] = useState<tableContentT>({
+        key: 0,
+        name: "",
+        PhoneNumber: 0,
+        subscription: [],
+        date: `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDate()}`,
+        state: "active",
+    });
+    const [userData, setUserData] = useState<tableContentT[]>([]);
+
+    const [subscriptions, setSubscriptions] = useState<
         {
-            key: 1,
-            name: "youssef 23",
-            subscription: "cardio",
-            date: new Date().getFullYear(),
-            state: "active",
+            value: "cardio" | "weights" | "yoga";
+            color: ChipProps["color"];
+            selected: boolean;
+        }[]
+    >([
+        {
+            value: "cardio",
+            color: "success",
+            selected: false,
         },
         {
-            key: 2,
-            name: "keven loveron",
-            subscription: "weights",
-            date: new Date().getFullYear(),
-            state: "paused",
+            value: "weights",
+            color: "primary",
+            selected: false,
         },
         {
-            key: 3,
-            name: "ronny coleman",
-            subscription: "weights",
-            date: new Date().getFullYear(),
-            state: "paused",
+            value: "yoga",
+            color: "secondary",
+            selected: false,
         },
-        {
-            key: 4,
-            name: "karen smith",
-            subscription: "yoga",
-            date: new Date().getFullYear(),
-            state: "waiting",
-        },
-    ];
+    ]);
 
     const columns = [
         {
@@ -95,114 +107,72 @@ function Manager() {
         },
     ];
 
-    const set = new Set<number | string>();
-    for (let i = 0; i < userData.length; i++) {
-        if (userData[i].state == "paused") {
-            set.add(userData[i].key.toString());
-        }
-    }
-    const selectedKeys = useRef(set);
+    // const set = new Set<number | string>();
+    // for (let i = 0; i < userData.length; i++) {
+    //     if (userData[i].state == "paused") {
+    //         set.add(userData[i].key.toString());
+    //     }
+    // }
+    // const selectedKeys = useRef(set);
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [isValidUser, setIsValidUser] = useState<boolean>();
 
     const cellData = useCallback(
         (userData: tableContentT, columnKey: React.Key) => {
             const cellValue = userData[columnKey as keyof tableContentT];
 
-            const subscriptions = [
-                {
-                    label: "cardio",
-                    value: "cardio",
-                    description: "The second most popular pet in the world",
-                },
-                {
-                    label: "weights",
-                    value: "weights",
-                    description: "The second most popular pet in the world",
-                },
-                {
-                    label: "yoga",
-                    value: "yoga",
-                    description: "The second most popular pet in the world",
-                },
-            ];
-
             switch (columnKey) {
                 case "name":
                     return (
+                        // ? add a popover for the user info
                         <User
                             className="capitalize"
                             avatarProps={{
                                 radius: "full",
                                 showFallback: true,
                                 isBordered: true,
-                                color: "primary",
+                                color: statusColorMap[userData.state],
                                 src: "",
                             }}
-                            description="test the description"
+                            description={userData.PhoneNumber}
                             name={cellValue as string}
                         />
                     );
                 case "subscription":
                     return (
-                        <Chip
-                            className="capitalize"
-                            color={subscriptionColorMap[cellValue as string]}
-                            size="md"
-                            variant="flat"
-                        >
-                            {cellValue as string}
-                        </Chip>
-                        // <Select
-                        //     items={userData as never}
-                        //     aria-label="subscription plan"
-                        //     labelPlacement="outside-left"
-                        //     size="md"
-                        //     variant="bordered"
-                        //     selectionMode="multiple"
-                        //     isMultiline={true}
-                        //     defaultSelectedKeys={[cellValue] as string[]}
-                        //     renderValue={(
-                        //         items: SelectedItems<tableContentT>
-                        //     ) => {
-                        //         return (
-                        //             <div className="flex flex-wrap gap-1 ">
-                        //                 {items.map((item) => (
-                        //                     <Chip
-                        //                         key={item.key}
-                        //                         size="sm"
-                        //                         radius="sm"
-                        //                     >
-                        //                         {item.textValue}
-                        //                     </Chip>
-                        //                 ))}
-                        //             </div>
-                        //         );
-                        //     }}
-                        // >
-                        //     {subscriptions.map((subscription) => (
-                        //         <SelectItem
-                        //             key={subscription.value}
-                        //             textValue={subscription.value}
-                        //         >
-                        //             {subscription.value}
-                        //         </SelectItem>
-                        //     ))}
-                        // </Select>
-                    );
-                case "date":
-                    return (
-                        <div className="relative flex items-center gap-2">
-                            <p>{cellValue as string}</p>
+                        <div className="flex gap-2">
+                            {(cellValue as [])?.map((sub, i) => {
+                                return (
+                                    <Chip
+                                        className="capitalize"
+                                        color={subscriptionColorMap[sub]}
+                                        size="md"
+                                        variant="flat"
+                                        key={i}
+                                    >
+                                        {sub}
+                                    </Chip>
+                                );
+                            })}
                         </div>
                     );
+                case "date":
+                    // ? make it look good
+                    return (
+                        <p className="font-bold text-inherit text-sm">
+                            {cellValue as string}
+                        </p>
+                    );
                 case "state":
+                    // ! make the state work with the date
+                    // ? add a Tooltip for what the state mean
                     return (
                         <Chip
                             className="capitalize"
                             color={statusColorMap[cellValue as string]}
                             size="md"
-                            variant="flat"
+                            variant="dot"
                         >
                             {cellValue as string}
                         </Chip>
@@ -218,31 +188,27 @@ function Manager() {
         <>
             <Table
                 aria-label="gym table manager"
-                selectionMode="single"
-                disabledKeys={selectedKeys.current}
-                onSelectionChange={() => {
-                    // ! add the edit
-                }}
+                // selectionMode="single"
+                // disabledKeys={selectedKeys.current}
+                // onSelectionChange={() => {
+                //     // ! add the edit
+                // }}
                 layout="fixed"
                 radius="sm"
                 bottomContent={
-                    <div className="flex w-full justify-center">
-                        <Tooltip
-                            content="Add new client data"
-                            placement="bottom"
-                        >
+                    // ! add pagination
+                    <div className="flex w-full justify-start">
+                        <Tooltip content="Add new client data" placement="top">
                             <Button
-                                color="primary"
-                                variant="shadow"
+                                color="default"
+                                isIconOnly
+                                variant="flat"
                                 aria-label="Add new client data"
                                 onPress={onOpen}
-                                endContent={
-                                    <span className="material-symbols-outlined">
-                                        add
-                                    </span>
-                                }
                             >
-                                Add Client
+                                <span className="material-symbols-outlined">
+                                    add
+                                </span>
                             </Button>
                         </Tooltip>
                     </div>
@@ -261,6 +227,10 @@ function Manager() {
                         "No data to display, click '+' icon to add a new row"
                     }
                 >
+                    {/* 
+                    // ! add an edit item button 
+                    // 
+                    */}
                     {(item) => (
                         <TableRow key={item.key}>
                             {(columnKey) => (
@@ -272,22 +242,153 @@ function Manager() {
                     )}
                 </TableBody>
             </Table>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                Modal Title
+                                Create New Client
                             </ModalHeader>
                             <ModalBody>
-                                {/* ! add the input and link it to the userData to update the table content */}
+                                <Input
+                                    type="text"
+                                    label="Name"
+                                    placeholder="Client Name"
+                                    description="Enter Client Name"
+                                    labelPlacement="outside"
+                                    isRequired
+                                    isClearable
+                                    color={
+                                        isValidUser === false
+                                            ? "danger"
+                                            : "default"
+                                    }
+                                    // startContent={}
+                                    // endContent={}
+                                    onValueChange={(value) => {
+                                        setNewUser((prev) => {
+                                            return { ...prev, name: value };
+                                        });
+                                    }}
+                                />
+                                <Input
+                                    type="tel"
+                                    label="Phone Number"
+                                    placeholder="Client phone number"
+                                    description="Enter Client phone number"
+                                    labelPlacement="outside"
+                                    isClearable
+                                    startContent={
+                                        <div className="pointer-events-none flex items-center">
+                                            <span className="text-default-400 text-small">
+                                                +20
+                                            </span>
+                                        </div>
+                                    }
+                                    onValueChange={(value) => {
+                                        setNewUser((prev) => {
+                                            return {
+                                                ...prev,
+                                                PhoneNumber: parseInt(value),
+                                            };
+                                        });
+                                    }}
+                                />
+                                <Divider className="my-4" />
+                                <h4 className="text-medium font-medium">
+                                    Chose Subscription[s] Plan:
+                                </h4>
+                                <div
+                                    className={`flex gap-2 ${
+                                        isValidUser === false
+                                            ? "bg-danger-50"
+                                            : ""
+                                    } p-4 rounded-md`}
+                                >
+                                    {/* 
+                                    // ! add an error state 
+                                    */}
+                                    {subscriptions.map((subscription, i) => {
+                                        return (
+                                            <Chip
+                                                className="capitalize"
+                                                style={{ cursor: "pointer" }}
+                                                key={subscription.value}
+                                                color={subscription.color}
+                                                size="md"
+                                                variant={
+                                                    subscriptions[i].selected
+                                                        ? "solid"
+                                                        : "bordered"
+                                                }
+                                                onClick={() => {
+                                                    setSubscriptions(
+                                                        (prevSubscriptions) => {
+                                                            const newSubscriptions =
+                                                                [
+                                                                    ...prevSubscriptions,
+                                                                ];
+                                                            newSubscriptions[
+                                                                i
+                                                            ] = {
+                                                                ...newSubscriptions[
+                                                                    i
+                                                                ],
+                                                                selected:
+                                                                    !newSubscriptions[
+                                                                        i
+                                                                    ].selected,
+                                                            };
+                                                            return newSubscriptions;
+                                                        }
+                                                    );
+                                                }}
+                                            >
+                                                {subscription.value}
+                                            </Chip>
+                                        );
+                                    })}
+                                </div>
+                                {/* 
+                                // ? add the date input
+                                 */}
                             </ModalBody>
                             <ModalFooter>
                                 <Button
                                     color="primary"
+                                    type="submit"
                                     onPress={() => {
-                                        // ! update table data from the input
-                                        onClose();
+                                        subscriptions.map((sub) => {
+                                            if (sub.selected) {
+                                                newUser.subscription.push(
+                                                    sub.value
+                                                );
+                                            }
+                                            sub.selected = false;
+                                        });
+                                        if (
+                                            newUser.name == "" ||
+                                            newUser.subscription.length == 0
+                                        ) {
+                                            setIsValidUser(false);
+                                        } else {
+                                            setIsValidUser(true);
+                                            setUserData((prevUserData) => {
+                                                return [
+                                                    ...prevUserData,
+                                                    newUser,
+                                                ];
+                                            });
+                                            setNewUser((prev) => {
+                                                const k = prev.key++;
+                                                return {
+                                                    ...prev,
+                                                    key: k,
+                                                    subscription: [],
+                                                };
+                                            });
+                                            onClose();
+                                        }
                                     }}
                                     endContent={
                                         <span className="material-symbols-outlined">
