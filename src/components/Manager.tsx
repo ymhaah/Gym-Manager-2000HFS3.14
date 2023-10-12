@@ -28,7 +28,12 @@ import {
     Popover,
     PopoverTrigger,
     PopoverContent,
+    Code,
+    Pagination,
+    getKeyValue,
 } from "@nextui-org/react";
+
+import { isBefore, endOfMonth, addMonths } from "date-fns";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
     active: "success",
@@ -59,10 +64,35 @@ function Manager() {
         name: "",
         PhoneNumber: 0,
         subscription: [],
-        date: `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDate()}`,
+        date: `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`,
         state: "active",
     });
-    const [userData, setUserData] = useState<tableContentT[]>([]);
+    const [userData, setUserData] = useState<tableContentT[]>([
+        {
+            key: -1,
+            name: "king youssef",
+            PhoneNumber: 20105681167,
+            subscription: ["weights", "yoga"],
+            date: `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`,
+            state: "active",
+        },
+        {
+            key: -2,
+            name: "keven lovren",
+            PhoneNumber: 0,
+            subscription: ["weights", "cardio"],
+            date: `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`,
+            state: "waiting",
+        },
+        {
+            key: -3,
+            name: "big jon",
+            PhoneNumber: 0,
+            subscription: ["cardio"],
+            date: `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`,
+            state: "paused",
+        },
+    ]);
 
     const [subscriptions, setSubscriptions] = useState<
         {
@@ -105,7 +135,23 @@ function Manager() {
             key: "state",
             label: "STATE",
         },
+        {
+            key: "",
+            label: "",
+        },
     ];
+
+    const [page, setPage] = useState(1);
+    const rowsPerPage = 5;
+
+    const pages = Math.ceil(userData.length / rowsPerPage);
+
+    const items = useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        return userData.slice(start, end);
+    }, [page, userData]);
 
     // const set = new Set<number | string>();
     // for (let i = 0; i < userData.length; i++) {
@@ -122,10 +168,18 @@ function Manager() {
         (userData: tableContentT, columnKey: React.Key) => {
             const cellValue = userData[columnKey as keyof tableContentT];
 
+            // const currentDate = new Date();
+
+            // if (isBefore(parseISO(userData.date), currentDate)) {
+            //     console.log("before");
+            // }
+
             switch (columnKey) {
                 case "name":
                     return (
                         // ? add a popover for the user info
+                        // ? in the popover make the name/number cody with Snippet + more user data
+
                         <User
                             className="capitalize"
                             avatarProps={{
@@ -135,7 +189,11 @@ function Manager() {
                                 color: statusColorMap[userData.state],
                                 src: "",
                             }}
-                            description={userData.PhoneNumber}
+                            description={
+                                userData.PhoneNumber == 0
+                                    ? "No Number provided"
+                                    : userData.PhoneNumber
+                            }
                             name={cellValue as string}
                         />
                     );
@@ -158,24 +216,59 @@ function Manager() {
                         </div>
                     );
                 case "date":
-                    // ? make it look good
-                    return (
-                        <p className="font-bold text-inherit text-sm">
-                            {cellValue as string}
-                        </p>
-                    );
+                    return <Code>{cellValue as string}</Code>;
                 case "state":
                     // ! make the state work with the date
-                    // ? add a Tooltip for what the state mean
                     return (
-                        <Chip
-                            className="capitalize"
+                        <Tooltip
+                            content={
+                                cellValue == "active"
+                                    ? "active subscription"
+                                    : cellValue == "waiting"
+                                    ? "expired, Warning week!"
+                                    : cellValue == "paused"
+                                    ? "subscription expired"
+                                    : "how do we got here"
+                            }
+                            placement="right"
                             color={statusColorMap[cellValue as string]}
-                            size="md"
-                            variant="dot"
                         >
-                            {cellValue as string}
-                        </Chip>
+                            <Chip
+                                className="capitalize"
+                                color={statusColorMap[cellValue as string]}
+                                size="md"
+                                variant="dot"
+                            >
+                                {cellValue as string}
+                            </Chip>
+                        </Tooltip>
+                    );
+                case "":
+                    return (
+                        <div className="flex gap-2">
+                            <Button
+                                color="default"
+                                isIconOnly
+                                variant="flat"
+                                aria-label="Add new client data"
+                                // onPress={onOpen}
+                            >
+                                <span className="material-symbols-outlined">
+                                    add
+                                </span>
+                            </Button>
+                            <Button
+                                color="default"
+                                isIconOnly
+                                variant="flat"
+                                aria-label="Add new client data"
+                                // onPress={onOpen}
+                            >
+                                <span className="material-symbols-outlined">
+                                    add
+                                </span>
+                            </Button>
+                        </div>
                     );
                 default:
                     return cellValue;
@@ -196,8 +289,7 @@ function Manager() {
                 layout="fixed"
                 radius="sm"
                 bottomContent={
-                    // ! add pagination
-                    <div className="flex w-full justify-start">
+                    <div className="flex w-full justify-between">
                         <Tooltip content="Add new client data" placement="top">
                             <Button
                                 color="default"
@@ -211,6 +303,14 @@ function Manager() {
                                 </span>
                             </Button>
                         </Tooltip>
+                        <Pagination
+                            showControls
+                            showShadow
+                            color="secondary"
+                            page={page}
+                            total={pages}
+                            onChange={(page) => setPage(page)}
+                        />
                     </div>
                 }
             >
@@ -222,7 +322,7 @@ function Manager() {
                     )}
                 </TableHeader>
                 <TableBody
-                    items={userData}
+                    items={items}
                     emptyContent={
                         "No data to display, click '+' icon to add a new row"
                     }
