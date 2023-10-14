@@ -45,13 +45,23 @@ const subscriptionColorMap: Record<string, ChipProps["color"]> = {
     cardio: "success",
     weights: "primary",
     yoga: "secondary",
+    boxing: "danger",
+    karate: "warning",
+    swimming: "default",
 };
 
 type tableContentT = {
     key: number;
     name: string;
     PhoneNumber?: number;
-    subscription: ("cardio" | "weights" | "yoga")[];
+    subscription: (
+        | "cardio"
+        | "weights"
+        | "yoga"
+        | "boxing"
+        | "karate"
+        | "swimming"
+    )[];
     date: Date | string | number;
     state: "active" | "waiting" | "paused";
 };
@@ -96,24 +106,45 @@ function Manager() {
 
     const [subscriptions, setSubscriptions] = useState<
         {
-            value: "cardio" | "weights" | "yoga";
+            value:
+                | "cardio"
+                | "weights"
+                | "yoga"
+                | "boxing"
+                | "karate"
+                | "swimming";
             color: ChipProps["color"];
             selected: boolean;
         }[]
     >([
-        {
-            value: "cardio",
-            color: "success",
-            selected: false,
-        },
         {
             value: "weights",
             color: "primary",
             selected: false,
         },
         {
+            value: "cardio",
+            color: "success",
+            selected: false,
+        },
+        {
             value: "yoga",
             color: "secondary",
+            selected: false,
+        },
+        {
+            value: "boxing",
+            color: "danger",
+            selected: false,
+        },
+        {
+            value: "karate",
+            color: "warning",
+            selected: false,
+        },
+        {
+            value: "swimming",
+            color: "default",
             selected: false,
         },
     ]);
@@ -136,7 +167,7 @@ function Manager() {
             label: "STATE",
         },
         {
-            key: "",
+            key: "manage",
             label: "",
         },
     ];
@@ -199,7 +230,7 @@ function Manager() {
                     );
                 case "subscription":
                     return (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 overflow-x-hidden ">
                             {(cellValue as [])?.map((sub, i) => {
                                 return (
                                     <Chip
@@ -243,14 +274,15 @@ function Manager() {
                             </Chip>
                         </Tooltip>
                     );
-                case "":
+                case "manage":
                     return (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 justify-end">
                             <Button
+                                // aria-label="Add new client data"
                                 color="default"
                                 isIconOnly
-                                variant="flat"
-                                aria-label="Add new client data"
+                                variant="light"
+                                size="sm"
                                 // onPress={onOpen}
                             >
                                 <span className="material-symbols-outlined">
@@ -258,10 +290,11 @@ function Manager() {
                                 </span>
                             </Button>
                             <Button
+                                // aria-label="Add new client data"
                                 color="default"
                                 isIconOnly
-                                variant="flat"
-                                aria-label="Add new client data"
+                                variant="light"
+                                size="sm"
                                 // onPress={onOpen}
                             >
                                 <span className="material-symbols-outlined">
@@ -306,7 +339,7 @@ function Manager() {
                         <Pagination
                             showControls
                             showShadow
-                            color="secondary"
+                            color="primary"
                             page={page}
                             total={pages}
                             onChange={(page) => setPage(page)}
