@@ -8,7 +8,6 @@ import {
     NavbarMenu,
     NavbarMenuItem,
     NavbarMenuToggle,
-    Link,
     Button,
     Dropdown,
     DropdownTrigger,
@@ -17,6 +16,9 @@ import {
     DropdownItem,
     Tooltip,
 } from "@nextui-org/react";
+
+import { Link as UiLink } from "@nextui-org/react"; // ? next UI link
+import { Link as RLink } from "react-router-dom"; // ? react router link
 
 function Header({
     themeConfig,
@@ -36,12 +38,12 @@ function Header({
                 className="sm:hidden"
             />
             <NavbarBrand>
-                <Link color="foreground" href="/">
+                <RLink to="/" className="flex">
                     <span className="material-symbols-outlined">exercise</span>
                     <p className="font-bold text-inherit">GM-2000</p>
-                </Link>
+                </RLink>
             </NavbarBrand>
-            <NavbarContent className="hidden sm:flex gap-4" justify="center">
+            {/* <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 <NavbarItem>
                     <Link color="foreground" href="#">
                         Features
@@ -57,7 +59,7 @@ function Header({
                         Integrations
                     </Link>
                 </NavbarItem>
-            </NavbarContent>
+            </NavbarContent> */}
             <NavbarContent justify="end">
                 <NavbarItem>
                     <Tooltip content="switch theme" placement="bottom">
@@ -115,22 +117,23 @@ function Header({
                 </Dropdown>
             </NavbarContent>
             <NavbarMenu>
+                {/* // ! fix the link path */}
                 {menuItems.current.map((item, index) => (
                     <NavbarMenuItem key={`${item}-${index}`}>
-                        <Link
-                            color={
-                                index === 2
-                                    ? "primary"
-                                    : index === menuItems.current.length - 1
-                                    ? "danger"
-                                    : "foreground"
-                            }
-                            className="w-full"
-                            href="#"
-                            size="lg"
+                        <RLink
+                            // color={
+                            //     index === 2
+                            //         ? "primary"
+                            //         : index === menuItems.current.length - 1
+                            //         ? "danger"
+                            //         : "foreground"
+                            // }
+                            // className="w-full"
+                            to="/"
+                            // size="lg"
                         >
                             {item}
-                        </Link>
+                        </RLink>
                     </NavbarMenuItem>
                 ))}
             </NavbarMenu>

@@ -1,10 +1,13 @@
 import { useState, useRef } from "react";
 import react from "@vitejs/plugin-react-swc";
 
+import { Outlet, Link } from "react-router-dom";
+
 import useLocalStorage from "./hooks/useLocalStorage.tsx";
 
 import Header from "./components/Header.tsx";
-import Manager from "./components/Manager.tsx";
+import Aside from "./components/Aside.tsx";
+import Footer from "./components/Footer.tsx";
 
 function App() {
     const [darkMode, setDarkMode] = useLocalStorage<boolean>("darkMode", true);
@@ -22,11 +25,14 @@ function App() {
             } text-foreground bg-background`}
         >
             <Header themeConfig={darkMode} switchTheme={switchTheme} />
+            <Aside />
+            <Link to="/statistics">statistics</Link>
             <main>
                 <div className="Container">
-                    <Manager />
+                    <Outlet />
                 </div>
             </main>
+            <Footer />
         </div>
     );
 }

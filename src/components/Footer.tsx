@@ -23,14 +23,14 @@ function Footer() {
                     <div className="madeWith Div">
                         <p>
                             Made with
-                            <span className="hart">
+                            {/* <span className="hart">
                                 <lord-icon
                                     src="https://cdn.lordicon.com/xryjrepg.json"
                                     trigger="hover"
                                     colors="primary:#0d6dfd"
                                     style="width:16px;height:16px"
                                 ></lord-icon>
-                            </span>
+                            </span> */}
                             by
                         </p>
                     </div>

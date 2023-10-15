@@ -277,30 +277,42 @@ function Manager() {
                 case "manage":
                     return (
                         <div className="flex gap-2 justify-end">
-                            <Button
-                                // aria-label="Add new client data"
-                                color="default"
-                                isIconOnly
-                                variant="light"
-                                size="sm"
-                                // onPress={onOpen}
+                            <Tooltip
+                                content="Delete User"
+                                placement="top"
+                                color="danger"
                             >
-                                <span className="material-symbols-outlined">
-                                    add
-                                </span>
-                            </Button>
-                            <Button
-                                // aria-label="Add new client data"
+                                <Button
+                                    aria-label="delete this user info"
+                                    color="danger"
+                                    isIconOnly
+                                    variant="light"
+                                    size="sm"
+                                    // onPress={onOpen}
+                                >
+                                    <span className="material-symbols-outlined">
+                                        delete
+                                    </span>
+                                </Button>
+                            </Tooltip>
+                            <Tooltip
+                                content="Edit User"
+                                placement="top"
                                 color="default"
-                                isIconOnly
-                                variant="light"
-                                size="sm"
-                                // onPress={onOpen}
                             >
-                                <span className="material-symbols-outlined">
-                                    add
-                                </span>
-                            </Button>
+                                <Button
+                                    aria-label="edit this user info"
+                                    color="default"
+                                    isIconOnly
+                                    variant="light"
+                                    size="sm"
+                                    onPress={() => {}}
+                                >
+                                    <span className="material-symbols-outlined">
+                                        edit
+                                    </span>
+                                </Button>
+                            </Tooltip>
                         </div>
                     );
                 default:
@@ -404,6 +416,17 @@ function Manager() {
                                         });
                                     }}
                                 />
+                                {/* <Select label="select" className="max-w-xs">
+                                    <SelectItem key={1} value="1">
+                                        1
+                                    </SelectItem>
+                                    <SelectItem key={2} value="2">
+                                        2
+                                    </SelectItem>
+                                    <SelectItem key={3} value="3">
+                                        3
+                                    </SelectItem>
+                                </Select> */}
                                 <Input
                                     type="tel"
                                     label="Phone Number"
