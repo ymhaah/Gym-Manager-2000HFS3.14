@@ -1,9 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import react from "@vitejs/plugin-react-swc";
 
 import { Outlet, Link } from "react-router-dom";
 
 import useLocalStorage from "./hooks/useLocalStorage.tsx";
+import usePageLoad from "./hooks/usePageLoad.tsx";
+
+import { CircularProgress } from "@nextui-org/react";
 
 import Header from "./components/Header.tsx";
 import Aside from "./components/Aside.tsx";
@@ -11,6 +14,8 @@ import Footer from "./components/Footer.tsx";
 
 function App() {
     const [darkMode, setDarkMode] = useLocalStorage<boolean>("darkMode", true);
+
+    const pageLoad = usePageLoad();
 
     function switchTheme() {
         setDarkMode((prevThemeMode: boolean) => {
@@ -22,16 +27,20 @@ function App() {
         <div
             className={`${
                 darkMode ? "dark" : "light"
-            } text-foreground bg-background`}
+            } text-foreground bg-background `}
         >
-            <Header themeConfig={darkMode} switchTheme={switchTheme} />
-            <Aside />
-            <Link to="/statistics">statistics</Link>
-            <main>
-                <div className="Container">
-                    <Outlet />
+            {!pageLoad && (
+                <div className="bg-background Loader">
+                    <CircularProgress size="lg" aria-label="Loading..." />
                 </div>
-            </main>
+            )}
+            <Header themeConfig={darkMode} switchTheme={switchTheme} />
+            <div className="Coll">
+                <Aside />
+                <main>
+                    <Outlet />
+                </main>
+            </div>
             <Footer />
         </div>
     );

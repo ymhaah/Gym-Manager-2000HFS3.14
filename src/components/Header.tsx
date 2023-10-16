@@ -15,6 +15,7 @@ import {
     DropdownSection,
     DropdownItem,
     Tooltip,
+    Divider,
 } from "@nextui-org/react";
 
 import { Link as UiLink } from "@nextui-org/react"; // ? next UI link
@@ -29,7 +30,7 @@ function Header({
 }) {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-    const menuItems = useRef(["Profile", "Dashboard", "Activity"]);
+    const menuItems = useRef(["Home", "Statistics", "About"]);
 
     return (
         <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen}>
@@ -43,23 +44,6 @@ function Header({
                     <p className="font-bold text-inherit">GM-2000</p>
                 </RLink>
             </NavbarBrand>
-            {/* <NavbarContent className="hidden sm:flex gap-4" justify="center">
-                <NavbarItem>
-                    <Link color="foreground" href="#">
-                        Features
-                    </Link>
-                </NavbarItem>
-                <NavbarItem isActive>
-                    <Link href="#" aria-current="page">
-                        Customers
-                    </Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Link color="foreground" href="#">
-                        Integrations
-                    </Link>
-                </NavbarItem>
-            </NavbarContent> */}
             <NavbarContent justify="end">
                 <NavbarItem>
                     <Tooltip content="switch theme" placement="bottom">
@@ -82,6 +66,7 @@ function Header({
                         </Button>
                     </Tooltip>
                 </NavbarItem>
+                {/* //! link the Dropdown to the table */}
                 <Dropdown>
                     <NavbarItem className="hidden lg:flex">
                         <DropdownTrigger>
@@ -120,20 +105,8 @@ function Header({
                 {/* // ! fix the link path */}
                 {menuItems.current.map((item, index) => (
                     <NavbarMenuItem key={`${item}-${index}`}>
-                        <RLink
-                            // color={
-                            //     index === 2
-                            //         ? "primary"
-                            //         : index === menuItems.current.length - 1
-                            //         ? "danger"
-                            //         : "foreground"
-                            // }
-                            // className="w-full"
-                            to="/"
-                            // size="lg"
-                        >
-                            {item}
-                        </RLink>
+                        <UiLink href={`/${item}`}>{item}</UiLink>
+                        <Divider className="my-2" />
                     </NavbarMenuItem>
                 ))}
             </NavbarMenu>

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-
+    --aside-width: 20%;
 }
 
 *,
@@ -31,11 +31,7 @@ html,
 body {
     max-width: 100%;
     overflow-x: hidden;
-    background-color: var(--bg-clr);
-}
-
-main {
-    width: 100%;
+    /* background-color: var(--bg-clr); */
 }
 
 .Container {
@@ -48,6 +44,68 @@ main {
 :where(h1, h2, h3, h4) {
     text-wrap: balance;
 }
+
+.Loader {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0 1rem;
+    text-align: center;
+}
+
+.Main {
+}
+
+.Coll {
+    display: flex;
+    flex-direction: row;
+}
+aside {
+    width: var(--aside-width);
+    height: fit-content;
+    position: sticky;
+    padding: 1rem 0.5rem 1rem 1rem;
+}
+
+aside nav {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+}
+
+aside nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+aside nav ul li {
+    padding: 0.5rem;
+}
+
+main {
+    width: calc(100% - var(--aside-width));
+    min-height: 100vh;
+    padding: 1rem 1rem 1rem 0.5rem;
+}
+
+@media screen and (max-width: 768px) {
+    aside {
+        display: none;
+    }
+    main {
+        width: 100%;
+        padding: 1.5rem;
+    }
+}
+
 .visually-hidden {
     position: absolute;
     position: absolute !important;
@@ -65,7 +123,9 @@ main {
 .no-script {
     width: 100vw;
     height: 100vh;
-    @include flex(r, c, c);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     z-index: 9999;
     position: fixed;
     top: 0;
@@ -81,9 +141,5 @@ main {
 }
 
 .material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 8;
 }
