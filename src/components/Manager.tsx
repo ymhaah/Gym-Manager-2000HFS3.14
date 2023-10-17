@@ -58,7 +58,7 @@ type subscriptionsInfoT = {
 type tableContentT = {
     key: number;
     name: string;
-    PhoneNumber?: number;
+    PhoneNumber?: string | number;
     subscription: subscriptionsT[];
     date: Date | string | number;
     state: "active" | "waiting" | "paused";
@@ -110,7 +110,7 @@ function Manager() {
     ]);
 
     const [newUser, setNewUser] = useState<tableContentT>({
-        key: usersData.length - 1,
+        key: usersData.length,
         name: "",
         PhoneNumber: 0,
         subscription: [],
@@ -188,10 +188,11 @@ function Manager() {
     const [isValidUserName, setIsValidUserName] = useState<boolean>(true);
     const [isValidUserSub, setIsValidUserSub] = useState<boolean>(true);
 
-    const cellData = useCallback(
-        (userData: tableContentT, columnKey: React.Key) => {
-            const cellValue = userData[columnKey as keyof tableContentT];
+    const [editOrNew, setEditOrNew] = useState<number>();
 
+    const cellData = useCallback(
+        (userData: tableContentT, columnKey: React.Key, i: number) => {
+            const cellValue = userData[columnKey as keyof tableContentT];
             switch (columnKey) {
                 case "name":
                     return (
@@ -276,16 +277,13 @@ function Manager() {
                                     variant="light"
                                     size="sm"
                                     onPress={() => {
-                                        // ! fix the error
                                         setUsersData((prevUsersData) => {
                                             const newUserData = [
                                                 ...prevUsersData,
                                             ];
-
-                                            delete newUserData[userData.key];
+                                            newUserData.splice(i, 1);
                                             return newUserData;
                                         });
-                                        console.log(userData);
                                     }}
                                 >
                                     <span className="material-symbols-outlined">
@@ -304,7 +302,10 @@ function Manager() {
                                     isIconOnly
                                     variant="light"
                                     size="sm"
-                                    onPress={() => {}}
+                                    onPress={() => {
+                                        onOpen();
+                                        setEditOrNew(i);
+                                    }}
                                 >
                                     <span className="material-symbols-outlined">
                                         edit
@@ -317,7 +318,7 @@ function Manager() {
                     return cellValue;
             }
         },
-        [usersData]
+        []
     );
 
     return (
@@ -335,7 +336,10 @@ function Manager() {
                                 isIconOnly
                                 variant="flat"
                                 aria-label="Add new client data"
-                                onPress={onOpen}
+                                onPress={() => {
+                                    onOpen();
+                                    setEditOrNew(usersData.length);
+                                }}
                             >
                                 <span className="material-symbols-outlined">
                                     add
@@ -366,15 +370,23 @@ function Manager() {
                         "No data to display, click '+' icon to add a new row"
                     }
                 >
-                    {(item) => (
-                        <TableRow key={item.key}>
-                            {(columnKey) => (
-                                <TableCell>
-                                    {cellData(item, columnKey) as ReactNode}
-                                </TableCell>
-                            )}
-                        </TableRow>
-                    )}
+                    {items.map((item, i) => {
+                        return (
+                            <TableRow key={item.key}>
+                                {(columnKey) => (
+                                    <TableCell>
+                                        {
+                                            cellData(
+                                                item,
+                                                columnKey,
+                                                i
+                                            ) as ReactNode
+                                        }
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
@@ -404,10 +416,31 @@ function Manager() {
                                             ? "default"
                                             : "danger"
                                     }
+                                    value={
+                                        (editOrNew as number) >
+                                        usersData.length - 1
+                                            ? newUser.name
+                                            : usersData[editOrNew as number]
+                                                  .name
+                                    }
                                     onValueChange={(value) => {
-                                        setNewUser((prev) => {
-                                            return { ...prev, name: value };
-                                        });
+                                        (editOrNew as number) >
+                                        usersData.length - 1
+                                            ? setNewUser((prev) => {
+                                                  return {
+                                                      ...prev,
+                                                      name: value,
+                                                  };
+                                              })
+                                            : setUsersData((prev) => {
+                                                  const newUserData = [...prev];
+
+                                                  newUserData[
+                                                      editOrNew as number
+                                                  ].name = value;
+
+                                                  return newUserData;
+                                              });
                                     }}
                                 />
                                 <Input
@@ -424,13 +457,31 @@ function Manager() {
                                             </span>
                                         </div>
                                     }
+                                    value={
+                                        (editOrNew as number) >
+                                        usersData.length - 1
+                                            ? (newUser.PhoneNumber as string)
+                                            : (usersData[editOrNew as number]
+                                                  .PhoneNumber as string)
+                                    }
                                     onValueChange={(value) => {
-                                        setNewUser((prev) => {
-                                            return {
-                                                ...prev,
-                                                PhoneNumber: parseInt(value),
-                                            };
-                                        });
+                                        (editOrNew as number) >
+                                        usersData.length - 1
+                                            ? setNewUser((prev) => {
+                                                  return {
+                                                      ...prev,
+                                                      PhoneNumber: value,
+                                                  };
+                                              })
+                                            : setUsersData((prev) => {
+                                                  const newUserData = [...prev];
+
+                                                  newUserData[
+                                                      editOrNew as number
+                                                  ].PhoneNumber = value;
+
+                                                  return newUserData;
+                                              });
                                     }}
                                 />
                                 <Divider className="my-4" />
@@ -524,45 +575,54 @@ function Manager() {
                                         ) {
                                             setIsValidUserSub(false);
                                         } else {
-                                            setIsValidUserName(true);
-                                            setIsValidUserSub(true);
-                                            setUsersData((prevUsersData) => {
-                                                return [
-                                                    ...prevUsersData,
-                                                    newUser,
-                                                ];
-                                            });
-
-                                            setNewUser((prev) => {
-                                                const k = prev.key++;
-                                                return {
-                                                    ...prev,
-                                                    name: "",
-                                                    PhoneNumber: 0,
-                                                    key: k,
-                                                    subscription: [],
-                                                };
-                                            });
-                                            subscriptions.map((sub) => {
-                                                if (sub.selected) {
-                                                    if (
-                                                        newUser.subscription.every(
-                                                            (ns) => {
-                                                                return (
-                                                                    sub.value !=
-                                                                    ns
-                                                                );
-                                                            }
-                                                        )
-                                                    ) {
-                                                        newUser.subscription.push(
-                                                            sub.value
-                                                        );
+                                            if (
+                                                (editOrNew as number) >
+                                                usersData.length - 1
+                                            ) {
+                                                setIsValidUserName(true);
+                                                setIsValidUserSub(true);
+                                                setUsersData(
+                                                    (prevUsersData) => {
+                                                        return [
+                                                            ...prevUsersData,
+                                                            newUser,
+                                                        ];
                                                     }
-                                                }
-                                                sub.selected = false;
-                                            });
-                                            onClose();
+                                                );
+
+                                                setNewUser((prev) => {
+                                                    const k = prev.key++;
+                                                    return {
+                                                        ...prev,
+                                                        name: "",
+                                                        PhoneNumber: 0,
+                                                        key: k,
+                                                        subscription: [],
+                                                    };
+                                                });
+                                                subscriptions.map((sub) => {
+                                                    if (sub.selected) {
+                                                        if (
+                                                            newUser.subscription.every(
+                                                                (ns) => {
+                                                                    return (
+                                                                        sub.value !=
+                                                                        ns
+                                                                    );
+                                                                }
+                                                            )
+                                                        ) {
+                                                            newUser.subscription.push(
+                                                                sub.value
+                                                            );
+                                                        }
+                                                    }
+                                                    sub.selected = false;
+                                                });
+                                                onClose();
+                                            } else {
+                                                onClose();
+                                            }
                                         }
                                     }}
                                     endContent={
