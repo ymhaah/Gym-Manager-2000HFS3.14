@@ -12,14 +12,17 @@ import {
     Dropdown,
     DropdownTrigger,
     DropdownMenu,
-    DropdownSection,
     DropdownItem,
     Tooltip,
     Divider,
 } from "@nextui-org/react";
 
+import { toast } from "sonner";
+
 import { Link as UiLink } from "@nextui-org/react"; // ? next UI link
 import { Link as RLink } from "react-router-dom"; // ? react router link
+
+// TODO: use react router with nav
 
 function Header({
     themeConfig,
@@ -33,7 +36,7 @@ function Header({
     const menuItems = useRef(["Home", "Statistics", "About"]);
 
     return (
-        <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen}>
+        <Navbar onMenuOpenChange={setIsMenuOpen}>
             <NavbarMenuToggle
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                 className="sm:hidden"
@@ -66,7 +69,6 @@ function Header({
                         </Button>
                     </Tooltip>
                 </NavbarItem>
-                {/* //! link the Dropdown to the table */}
                 <Dropdown>
                     <NavbarItem className="hidden lg:flex">
                         <DropdownTrigger>
@@ -79,30 +81,29 @@ function Header({
                                     </span>
                                 }
                             >
-                                Open Menu
+                                Settings
                             </Button>
                         </DropdownTrigger>
                     </NavbarItem>
-                    <DropdownMenu aria-label="Static Actions">
-                        <DropdownSection title="Actions" showDivider>
-                            <DropdownItem key="new">New file</DropdownItem>
-                            <DropdownItem key="copy">Copy link</DropdownItem>
-                            <DropdownItem key="edit">Edit file</DropdownItem>
-                        </DropdownSection>
-                        <DropdownSection title="Danger zone">
-                            <DropdownItem
-                                key="delete"
-                                className="text-danger"
-                                color="danger"
-                            >
-                                Delete file
-                            </DropdownItem>
-                        </DropdownSection>
+                    <DropdownMenu aria-label="Settings">
+                        <DropdownItem
+                            key="Theme setting"
+                            onClick={() => toast.error("Incomplete Feature")}
+                            style={{ cursor: "not-allowed" }}
+                        >
+                            Theme setting
+                        </DropdownItem>
+                        <DropdownItem
+                            key="Download data"
+                            onClick={() => toast.error("Incomplete Feature")}
+                            style={{ cursor: "not-allowed" }}
+                        >
+                            Download data
+                        </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
             </NavbarContent>
             <NavbarMenu>
-                {/* // ! fix the link path */}
                 {menuItems.current.map((item, index) => (
                     <NavbarMenuItem key={`${item}-${index}`}>
                         <UiLink href={`/${item}`}>{item}</UiLink>

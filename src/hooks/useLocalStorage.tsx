@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import react from "@vitejs/plugin-react-swc";
 
 function getSavedValue<valueT>(key: string, initialValue: valueT) {
     const savedValue = JSON.parse(localStorage.getItem(key) as string);

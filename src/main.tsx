@@ -13,6 +13,9 @@ import Manager from "./components/Manager.tsx";
 
 import "./index.css";
 
+// TODO: Statistics page
+// TODO: About me page
+
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route element={<App />}>

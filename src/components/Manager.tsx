@@ -1,6 +1,4 @@
-import { useRef, useState, useCallback, ReactNode, useMemo } from "react";
-
-import useLocalStorage from "../hooks/useLocalStorage.tsx";
+import { useState, useCallback, ReactNode, useMemo } from "react";
 
 import {
     Table,
@@ -12,9 +10,6 @@ import {
     User,
     Chip,
     ChipProps,
-    Select,
-    SelectItem,
-    SelectedItems,
     Tooltip,
     Button,
     Modal,
@@ -25,13 +20,11 @@ import {
     useDisclosure,
     Input,
     Divider,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
     Code,
     Pagination,
-    getKeyValue,
 } from "@nextui-org/react";
+
+import { toast } from "sonner";
 
 // import {
 //     isBefore,
@@ -40,6 +33,15 @@ import {
 //     addMonths,
 //     startOfMonth,
 // } from "date-fns";
+
+// TODO: filter & search
+// TODO: the edit button
+// TODO: link the subscription state to the data with "date-fns"
+// TODO: make the table work on phone size
+// TODO: add the data biker
+// TODO: add a popover for the user info
+// TODO: in the popover make the name/number cody with Snippet + more user data
+// TODO: use Regex to validate the input date name/phone
 
 type subscriptionsT =
     | "cardio"
@@ -80,7 +82,7 @@ const subscriptionColorMap: Record<string, ChipProps["color"]> = {
 };
 
 function Manager() {
-    // const phoneReg = /^(01)[0-2,5]{1}[0-9]{8}/g;
+    // ! const phoneReg = /^(01)[0-2,5]{1}[0-9]{8}/g;
 
     const [usersData, setUsersData] = useState<tableContentT[]>([
         {
@@ -88,13 +90,12 @@ function Manager() {
             name: "king youssef",
             PhoneNumber: 20105681167,
             subscription: ["weights", "yoga"],
-            date: `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`,
+            date: new Date().toISOString().slice(0, 10),
             state: "active",
         },
         {
             key: 1,
             name: "keven lovren",
-            PhoneNumber: 0,
             subscription: ["weights", "cardio"],
             date: `2023-10-1`,
             state: "waiting",
@@ -102,7 +103,6 @@ function Manager() {
         {
             key: 2,
             name: "big jon",
-            PhoneNumber: 0,
             subscription: ["cardio"],
             date: `2023-9-1`,
             state: "paused",
@@ -112,9 +112,9 @@ function Manager() {
     const [newUser, setNewUser] = useState<tableContentT>({
         key: usersData.length,
         name: "",
-        PhoneNumber: 0,
+        PhoneNumber: "",
         subscription: [],
-        date: `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`,
+        date: new Date().toISOString().slice(0, 10),
         state: "active",
     });
 
@@ -196,9 +196,6 @@ function Manager() {
             switch (columnKey) {
                 case "name":
                     return (
-                        // ? add a popover for the user info
-                        // ? in the popover make the name/number cody with Snippet + more user data
-
                         <User
                             className="capitalize whitespace-nowrap"
                             avatarProps={{
@@ -237,7 +234,6 @@ function Manager() {
                 case "date":
                     return <Code>{cellValue as string}</Code>;
                 case "state":
-                    // ! make the state work with the date
                     return (
                         <Tooltip
                             content={
@@ -303,8 +299,7 @@ function Manager() {
                                     variant="light"
                                     size="sm"
                                     onPress={() => {
-                                        onOpen();
-                                        setEditOrNew(i);
+                                        toast.error("Incomplete Feature");
                                     }}
                                 >
                                     <span className="material-symbols-outlined">
@@ -324,6 +319,7 @@ function Manager() {
     return (
         <>
             <Table
+                className="p-4"
                 aria-label="gym table manager"
                 isStriped={true}
                 layout="fixed"
@@ -559,6 +555,7 @@ function Manager() {
                                                 }
                                             }
                                         });
+
                                         if (
                                             newUser.name == "" &&
                                             newUser.subscription.length == 0
@@ -575,54 +572,46 @@ function Manager() {
                                         ) {
                                             setIsValidUserSub(false);
                                         } else {
-                                            if (
-                                                (editOrNew as number) >
-                                                usersData.length - 1
-                                            ) {
-                                                setIsValidUserName(true);
-                                                setIsValidUserSub(true);
-                                                setUsersData(
-                                                    (prevUsersData) => {
-                                                        return [
-                                                            ...prevUsersData,
-                                                            newUser,
-                                                        ];
-                                                    }
-                                                );
+                                            setIsValidUserName(true);
+                                            setIsValidUserSub(true);
+                                            setUsersData((prevUsersData) => {
+                                                return [
+                                                    ...prevUsersData,
+                                                    newUser,
+                                                ];
+                                            });
 
-                                                setNewUser((prev) => {
-                                                    const k = prev.key++;
-                                                    return {
-                                                        ...prev,
-                                                        name: "",
-                                                        PhoneNumber: 0,
-                                                        key: k,
-                                                        subscription: [],
-                                                    };
-                                                });
-                                                subscriptions.map((sub) => {
-                                                    if (sub.selected) {
-                                                        if (
-                                                            newUser.subscription.every(
-                                                                (ns) => {
-                                                                    return (
-                                                                        sub.value !=
-                                                                        ns
-                                                                    );
-                                                                }
-                                                            )
-                                                        ) {
-                                                            newUser.subscription.push(
-                                                                sub.value
-                                                            );
-                                                        }
+                                            setNewUser((prev) => {
+                                                const k = prev.key++;
+                                                return {
+                                                    ...prev,
+                                                    name: "",
+                                                    PhoneNumber: 0,
+                                                    key: k,
+                                                    subscription: [],
+                                                };
+                                            });
+                                            subscriptions.map((sub) => {
+                                                if (sub.selected) {
+                                                    if (
+                                                        newUser.subscription.every(
+                                                            (ns) => {
+                                                                return (
+                                                                    sub.value !=
+                                                                    ns
+                                                                );
+                                                            }
+                                                        )
+                                                    ) {
+                                                        newUser.subscription.push(
+                                                            sub.value
+                                                        );
                                                     }
-                                                    sub.selected = false;
-                                                });
-                                                onClose();
-                                            } else {
-                                                onClose();
-                                            }
+                                                }
+                                                sub.selected = false;
+                                            });
+
+                                            onClose();
                                         }
                                     }}
                                     endContent={

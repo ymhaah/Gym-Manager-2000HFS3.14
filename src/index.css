@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 :root {
-    --aside-width: 20%;
+    --aside-width: 15%;
 }
-
 *,
 *::before,
 *::after {
@@ -14,7 +13,6 @@
 html,
 html:focus-within {
     scroll-behavior: smooth;
-    scroll-padding-top: var(--header-padding-hight, 5rem);
     text-size-adjust: none;
 }
 body {
@@ -22,8 +20,6 @@ body {
     margin: 0;
     padding: 0;
     overscroll-behavior: contain;
-    /* ! font famaily */
-    /* font-family:  !important; */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -31,20 +27,24 @@ html,
 body {
     max-width: 100%;
     overflow-x: hidden;
-    /* background-color: var(--bg-clr); */
 }
-
-.Container {
-    --container-width: 90%;
-    height: 100%;
-    width: var(--container-width, 90%);
-    margin-inline: auto;
-}
-
-:where(h1, h2, h3, h4) {
+:where(h1, h2, h3, h4, p) {
     text-wrap: balance;
 }
-
+.noPhone {
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9998;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0 1rem;
+    text-align: center;
+}
 .Loader {
     width: 100vw;
     height: 100vh;
@@ -59,44 +59,46 @@ body {
     padding: 0 1rem;
     text-align: center;
 }
-
-.Main {
+header {
+    max-width: 100% !important;
 }
-
-.Coll {
+.coll {
     display: flex;
     flex-direction: row;
 }
 aside {
     width: var(--aside-width);
-    height: fit-content;
-    position: sticky;
-    padding: 1rem 0.5rem 1rem 1rem;
+    height: 100%;
 }
-
 aside nav {
     width: 100%;
-    height: 100%;
-    padding: 0.5rem;
+    height: fit-content;
+    padding: 1rem;
 }
-
 aside nav ul {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
-
 aside nav ul li {
     padding: 0.5rem;
 }
-
 main {
     width: calc(100% - var(--aside-width));
     min-height: 100vh;
-    padding: 1rem 1rem 1rem 0.5rem;
 }
-
+footer {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+}
 @media screen and (max-width: 768px) {
+    .noPhone {
+        display: flex;
+    }
     aside {
         display: none;
     }
@@ -105,20 +107,6 @@ main {
         padding: 1.5rem;
     }
 }
-
-.visually-hidden {
-    position: absolute;
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-}
-
 .old-script,
 .no-script {
     width: 100vw;
@@ -139,7 +127,6 @@ main {
         color: #d9d4ce;
     } */
 }
-
 .material-symbols-outlined {
     font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 8;
 }
