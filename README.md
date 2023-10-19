@@ -17,13 +17,13 @@ Upcoming features:
 
 -   edit user data
 -   filter & search user data
--   Record more information such as weight, height, etc
+-   Record more information such as weight, height, etc 
 
 ### Screenshot
 
-![light mode home page](/dist/home-page-light.jpeg)
+![home-page-light](https://github.com/ymhaah/Gym-Manager-2000HFS3.14/assets/77534098/8734a91a-4d88-48f8-9849-c687d6bd5bad)
+![home-page-dark](https://github.com/ymhaah/Gym-Manager-2000HFS3.14/assets/77534098/0c3eaff0-08e9-4a41-a36a-69ec3cbedddf)
 
-![dark mode home page](/dist/home-page-dark.jpeg)
 
 ### Links
 
