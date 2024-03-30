@@ -1,11 +1,7 @@
 # gym-manager-2000hfs3-14
+> Start at: Sep 25, 2023
 
 The gym management tool simplifies gym administration with features like membership management, class scheduling, billing, payment processing, and reporting. It streamlines operations and enhances member experience.
-
-## Overview
-
-### The challenge
-
 Users should be able to:
 
 -   Adding information for a new customer and taking information such as name, phone number, and subscription type
@@ -107,22 +103,28 @@ export default function usePageLoad() {
 -   js date with the Date-fns library
 -   React-router
 
-## Useful resources
+### Useful resources
 
 Check out my latest previous articles:
 
 -   [Top 5 websites to sharpen your front-end skills.](https://dev.to/ymhaah/top-5-websites-to-sharpen-your-front-end-skills-3ao0)
--   [How To Build An Advanced Light/Dark Theme Website!](https://dev.to/ymhaah/how-to-build-an-advanced-lightdark-theme-website-gke)
+-   [Why couldn't you get a job as a freelancer?](https://dev.to/ymhaah/why-couldnt-you-get-a-job-as-a-freelancer-1jm8)
+-   [Top 5 Icon websites for devs and designers!!!](https://dev.to/ymhaah/top-5-icon-websites-for-devs-and-designers-53mh)
 -   [30-Day React Learning Journey!](https://dev.to/ymhaah/series/20473)
 
 ## Author
 
 -   professional links:
-    -   [Hefnawy Studio](https://www.instagram.com/hefnawystudio/)
-    -   [Twitter/X](https://twitter.com/hafanwy)
+    -   [Twitter / X](https://twitter.com/hafanwy)
     -   [LinkedIn](https://www.linkedin.com/in/youssef-hafnawy/)
+    -   [Newsletter](https://hefnawystudio.substack.com/?utm_source=navbar&utm_medium=web&r=31jf6o)
 -   Hire me:
     -   [UpWork](https://www.upwork.com/freelancers/~01acd8e5370e5646aa)
 -   Blog:
     -   [Medium](https://medium.com/@ymhaah250)
     -   [Dev.to](https://dev.to/ymhaah)
+
+### Free Services
+
+-   [Free Website performance Optimization](https://tally.so/r/nPzKaB)
+-   [Free Website Accessibility Optimization](https://tally.so/r/3lr2bp)
