@@ -1,5 +1,5 @@
 # gym-manager-2000hfs3-14
-> Start at: Sep 25, 2023
+> Not finished | Start at: Sep 25, 2023
 
 The gym management tool simplifies gym administration with features like membership management, class scheduling, billing, payment processing, and reporting. It streamlines operations and enhances member experience.
 Users should be able to:
