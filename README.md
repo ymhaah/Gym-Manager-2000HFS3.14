@@ -24,7 +24,6 @@ Upcoming features:
 ### Links
 
 -   [Live Site URL](https://dainty-meerkat-461818.netlify.app)
--   [Notion: Notes and Resources](https://foregoing-shell-a18.notion.site/Gym-Manager-2000HFS3-14-9f1dec05014a4fc2895d8b0984179d71?pvs=4)
 
 ### Built with
 
@@ -123,8 +122,3 @@ Check out my latest previous articles:
 -   Blog:
     -   [Medium](https://medium.com/@ymhaah250)
     -   [Dev.to](https://dev.to/ymhaah)
-
-### Free Services
-
--   [Free Website performance Optimization](https://tally.so/r/nPzKaB)
--   [Free Website Accessibility Optimization](https://tally.so/r/3lr2bp)
